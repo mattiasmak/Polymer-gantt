@@ -1,0 +1,63 @@
+<element name="gantt-chart" attributes="zoom projectStart showZoomControl panStart">
+    <template>
+        <style>
+            #ganttContainer {
+                overflow: hidden;
+            }
+        </style>
+        <div id="ganttContainer">
+            <div id="timeline">
+                <gantt-chart-timeline showZoomControl="{{showZoomControl}}"
+                                      panStartTimestamp="{{panStart}}" zoom="{{zoom}}"
+                                      startTimestamp="{{projectStart}}"
+                                      secondsPerPixel="{{secondsPerPixel}}"></gantt-chart-timeline>
+            </div>
+            <div id="events">
+                <content select="gantt-chart-events"></content>
+            </div>
+        </div>
+    </template>
+    <script>
+        Toolkit.register(this, {
+            zoom: 1.0,
+            showZoomControl: false,
+            projectStart: moment().startOf('month').unix(),
+            panStart: moment().startOf('month').unix(),
+            secondsPerPixel: 864, // show 1 day as 100px when zoom is 1.0
+            ready: function () {
+                this.zoomChanged();
+                this.projectStartChanged();
+                this.panStartChanged();
+                this.secondsPerPixelChanged();
+            },
+            zoomChanged: function () {
+                var events = this.querySelector('gantt-chart-events');
+                if (events)
+                    events.zoom = this.zoom;
+            },
+            projectStartChanged: function () {
+                var events = this.querySelector('gantt-chart-events');
+                if (events)
+                    events.projectStart = this.projectStart;
+            },
+            panStartChanged: function () {
+                var events = this.querySelector('gantt-chart-events');
+                if (events)
+                    events.panStart = this.panStart;
+            },
+            secondsPerPixelChanged: function () {
+                var events = this.querySelector('gantt-chart-events');
+                if (events)
+                    events.secondsPerPixel = this.secondsPerPixel;
+            },
+            applyZoom: function (value, reverse) {
+                if (reverse)
+                    return value / this.zoom * this.secondsPerPixel;
+                return value * this.zoom / this.secondsPerPixel;
+            },
+            convertPanStartToCssLeft: function (panStart) {
+                return (this.applyZoom(this.projectStart - panStart)) + 'px'
+            }
+        });
+    </script>
+</element>
