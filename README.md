@@ -16,6 +16,8 @@ Working on right now:
 
 [Demo here](http://polymer-gantt.eu01.aws.af.cm)
 
+Contact me: mattias@tunity.se
+
 More information will come soon...
 
 ![Screenshot](http://cl.ly/image/0N1X342c2c3Z/gantt.jpg)
