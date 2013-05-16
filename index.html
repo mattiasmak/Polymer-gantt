@@ -30,6 +30,7 @@
 
 <script>
     var t = document.getElementById('events');
+    
     var model = {
         events: [
             { thetitle: 'An event', duration: moment.duration(4, 'days').asSeconds(), start: moment("1 Jun 2013").unix() },
@@ -42,27 +43,11 @@
             { thetitle: 'Neque porro', duration: moment.duration(3, 'days').asSeconds(), start: moment("7 Jun 2013").unix() },
             { thetitle: 'Hello', duration: moment.duration(6, 'days').asSeconds(), start: moment("8 Jun 2013").unix() },
             { thetitle: 'Et harum quidem', duration: moment.duration(3, 'days').asSeconds(), start: moment("8 Jun 2013").unix() },
-            { thetitle: 'At vero eos et', duration: moment.duration(2, 'days').asSeconds(), start: moment("3 Jun 2013").unix() },
-            { thetitle: 'Quis autem', duration: moment.duration(1, 'days').asSeconds(), start: moment("5 Jun 2013").unix() },
-            { thetitle: 'Ut enim ad', duration: moment.duration(5, 'days').asSeconds(), start: moment("4 Jun 2013").unix() },
-            { thetitle: 'Nam libero', duration: moment.duration(6, 'days').asSeconds(), start: moment("3 Jun 2013").unix() },
-            { thetitle: 'Et harum quidem', duration: moment.duration(4, 'days').asSeconds(), start: moment("6 Jun 2013").unix() },
-            { thetitle: 'GoodBye', duration: moment.duration(3, 'days').asSeconds(), start: moment("7 Jun 2013").unix() },
+            { thetitle: 'At vero eos et', duration: moment.duration(2, 'days').asSeconds(), start: moment("3 Jun 2013").unix() }
         ]
     };
-    //    console.log(model);
-    //      HTMLTemplateElement.bindTree(t, model);
+   
     t.model = model;
-
-    //      document.addEventListener('click', function(e){
-    //
-    //          model.events.push( { thetitle: 'Another event' })
-    //
-    //         // model.events = newevents;
-    //
-    //
-    //      }, false);
-
 
 </script>
 
