@@ -1,0 +1,3 @@
+[submodule "polymer"]
+	path = polymer
+	url = https://github.com/Polymer/polymer.git
