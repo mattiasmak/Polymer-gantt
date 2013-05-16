@@ -14,6 +14,9 @@ Working on right now:
 - Dates and time on timeline
 - Sub-events
 
+[Demo](http://polymer-gantt.eu01.aws.af.cm).
+
+
 More information will come soon...
 
 ![Screenshot](http://cl.ly/image/0N1X342c2c3Z/gantt.jpg)
