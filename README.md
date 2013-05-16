@@ -3,7 +3,7 @@ Polymer-gantt
 
 This is gantt-chart Web Component. Written using [Polymer library](https://github.com/polymer/polymer).
 
-I try and keep the element as modular as possible. For example the timeline is an element that can be used on it's own for other purposes.
+I try and keep the components/elements as modular as possible. For example the timeline is an element that can be used on it's own for other purposes.
 
 Right now you can change the end and start time of event, move the events, scale the gantt chart and pan the timeline. 
 
