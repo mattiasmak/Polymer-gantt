@@ -1,3 +1,6 @@
 [submodule "polymer"]
 	path = polymer
 	url = https://github.com/Polymer/polymer.git
+[submodule "moment"]
+	path = moment
+	url = https://github.com/timrwood/moment.git
