@@ -1,7 +1,7 @@
 Polymer-gantt
 =============
 
-This is gantt-chart Web Component. Written using Polymer library from Google.
+This is gantt-chart Web Component. Written using [Polymer library](https://github.com/polymer/polymer).
 
 More information will come soon...
 
