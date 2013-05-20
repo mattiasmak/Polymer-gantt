@@ -15,10 +15,7 @@
 
             #timeline {
                 cursor: pointer;
-                background-color: lightblue;
-                padding: 25px;
-                width: 3000px;
-                
+                background-color: #8E44AD;
                 position: relative;
             }
         </style>
@@ -38,6 +35,7 @@
             startTimestamp: moment().startOf('month').unix(),
             secondsPerPixel: 864, // show 1 day as 100px when zoom is 1.0
             panStartTimestamp: moment().startOf('month').unix(),
+            stage: null, // the KineticJS stage
             ready: function () {
                 this.zoomChanged();
                 this.showZoomControlChanged();
@@ -48,16 +46,60 @@
                 this.reDrawTimeline();
             },
             reDrawTimeline: function () {
-                console.warn('TODO');
-                var
-                        width = this.$.timeline.clientWidth,
-                        timelineStartTimestamp = this.panStartTimestamp,
-                        timelineEndTimestamp = timelineStartTimestamp + this.secondsPerPixel / this.zoom * width;
-                console.log(
-                        moment.unix(timelineStartTimestamp).format('LLLL'),
-                        moment.unix(timelineEndTimestamp).format('LLLL'),
-                        moment.unix(timelineStartTimestamp).diff(moment.unix(timelineEndTimestamp))
-                );
+                var width = this.$.timeline.clientWidth;
+                if (width) {
+                    const boxSize = 100;
+                    var
+                            timelineStartTimestamp = this.panStartTimestamp,
+                            timelineEndTimestamp = timelineStartTimestamp + this.secondsPerPixel / this.zoom * width,
+                            timelineDurationInSeconds = moment.unix(timelineEndTimestamp).diff(moment.unix(timelineStartTimestamp), 'seconds'),
+                            timelineSecondsPerPixel = timelineDurationInSeconds / width,
+                            unroundedNumberOfBoxes = width / boxSize,
+                            numberOfBoxes = Math.ceil(unroundedNumberOfBoxes),
+                            momentTimelineStartTimestamp = moment.unix(timelineStartTimestamp),
+                            momentTimelineEndTimestamp = moment.unix(timelineEndTimestamp),
+                            timelineRange = moment().range(momentTimelineStartTimestamp, momentTimelineEndTimestamp),
+                            secondsInEachBox = timelineRange.valueOf() / unroundedNumberOfBoxes;
+//                    console.log(
+//                            momentTimelineStartTimestamp.format('LLLL'),
+//                            momentTimelineEndTimestamp.format('LLLL'),
+//                            moment.duration(timelineDurationInSeconds, 'seconds').humanize(),
+//                            timelineSecondsPerPixel,
+//                            numberOfBoxes,
+//                            timelineRange,
+//                            secondsInEachBox
+//                    );
+
+                    if (!this.stage) {
+                        this.stage = new Kinetic.Stage({
+                            container: this.$.timeline,
+                            width: width,
+                            height: 50
+                        });
+                    } else {
+                        this.stage.clear();
+                    }
+                    layer = new Kinetic.Layer();
+
+                    var previousMoment = null, count = 0;
+                    timelineRange.by(secondsInEachBox, function (aMoment) {
+                        if (previousMoment) {
+                            var text = new Kinetic.Text({
+                                text: moment.unix((aMoment.unix() + previousMoment.unix()) / 2).format('LLLL'),
+                                fill: 'white',
+                                width: boxSize,
+                                x: count++ * boxSize,
+                                align: 'center'
+                            });
+                            text.setY((50 - text.getHeight()) / 2);
+                            layer.add(text);
+                        }
+                        previousMoment = aMoment;
+                    });
+                    delete previousMoment, count;
+
+                    this.stage.add(layer);
+                }
             },
             panStartTimestampChanged: function () {
                 this.reDrawTimeline();
@@ -73,7 +115,8 @@
                 this.oldPanStartTimestamp = this.panStartTimestamp;
             },
             track: function (e) {
-                this.$.timeline.style.left = this.convertPanStartTimestampToCssLeft(this.newPanStartTimestamp = this.oldPanStartTimestamp - this.applyZoom(e.dx, true));
+                this.newPanStartTimestamp = this.oldPanStartTimestamp - this.applyZoom(e.dx, true);
+//                this.$.timeline.style.left = this.convertPanStartTimestampToCssLeft(this.newPanStartTimestamp);
                 this.panStartTimestamp = this.newPanStartTimestamp;
             },
             trackEnd: function (e) {

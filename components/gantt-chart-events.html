@@ -6,7 +6,9 @@
             }
         </style>
         <div id="eventsContainer">
-            <content></content>
+           
+                <content></content>
+            
         </div>
     </template>
     <script>
@@ -18,6 +20,7 @@
             ready: function () {
                 this.zoomChanged();
                 this.projectStartChanged();
+
             },
             zoomChanged: function () {
                 var arr = this.querySelectorAll('gantt-event');

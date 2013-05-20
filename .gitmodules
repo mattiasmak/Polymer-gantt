@@ -4,3 +4,6 @@
 [submodule "moment"]
 	path = moment
 	url = https://github.com/timrwood/moment.git
+[submodule "moment-range"]
+	path = moment-range
+	url = https://github.com/gf3/moment-range.git
