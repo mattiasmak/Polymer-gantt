@@ -20,6 +20,6 @@ Contact me: mattias@tunity.se
 
 More information will come soon...
 
-![Screenshot](http://cl.ly/image/0N1X342c2c3Z/gantt.jpg)
+![Screenshot](http://cl.ly/image/1M3M1f1C3y0V/Sk%C3%A4rmavbild%202013-05-20%20kl.%2009.50.51.png)
 
 
