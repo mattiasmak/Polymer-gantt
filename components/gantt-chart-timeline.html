@@ -18,13 +18,30 @@
                 background-color: #8E44AD;
                 position: relative;
             }
+            input[type='range'] {
+                -webkit-appearance: none !important;
+                background:#34495E;
+                height:26px;
+            }
+            input[type='range']::-webkit-slider-thumb {
+                -webkit-appearance: none !important;
+                    
+                width:15px;
+                height:15px;
+                border-radius:50px;
+                background:rgb(240, 61, 37);
+                opacity:0.95;
+            }
         </style>
         <div>
             <input type="range" min="0.1" max="5" step="0.1" value="{{zoom}}" style="display: none" id="zoomControl">
 
             <div id="timelineContainer">
-                <div id="timeline" on-trackstart="trackStart" on-track="track"
-                     on-trackend="trackEnd"></div>
+                <div id="timeline" on-trackstart="trackStart" on-track="track" on-trackend="trackEnd">
+
+                    <canvas id="timelinecanvas" width="100%" height="50" style='width:100%;height:50px'></canvas>
+
+                 </div>
             </div>
         </div>
     </template>
@@ -48,6 +65,8 @@
             reDrawTimeline: function () {
                 var width = this.$.timeline.clientWidth;
                 if (width) {
+
+
                     const boxSize = 100;
                     var
                             timelineStartTimestamp = this.panStartTimestamp,
@@ -60,15 +79,60 @@
                             momentTimelineEndTimestamp = moment.unix(timelineEndTimestamp),
                             timelineRange = moment().range(momentTimelineStartTimestamp, momentTimelineEndTimestamp),
                             secondsInEachBox = timelineRange.valueOf() / unroundedNumberOfBoxes;
-//                    console.log(
-//                            momentTimelineStartTimestamp.format('LLLL'),
-//                            momentTimelineEndTimestamp.format('LLLL'),
-//                            moment.duration(timelineDurationInSeconds, 'seconds').humanize(),
-//                            timelineSecondsPerPixel,
-//                            numberOfBoxes,
-//                            timelineRange,
-//                            secondsInEachBox
-//                    );
+
+                    var canvas =  this.$.timelinecanvas;
+                    //console.debug(canvas);
+                    if (canvas && canvas.getContext){
+                 
+                    // use getContext to use the canvas for drawing
+                    var ctx = canvas.getContext('2d');
+                    
+                    canvas.width  = width;
+                    canvas.height = 50;
+
+                    canvas.style.width=width;
+                    canvas.style.height=50;
+
+                    //console.debug(ctx);
+
+
+
+                    ctx.font      = "normal 14px arial";
+                    ctx.fillStyle = "#ffffff";
+                   
+
+
+                    var previousMoment = null, count = 0;
+                    timelineRange.by(secondsInEachBox, function (aMoment) {
+                        if (previousMoment) {
+                            
+                            x = count++ * boxSize;
+                            ctx.fillText(moment.unix((aMoment.unix() + previousMoment.unix()) / 2).format('LLLL'), x, 25.5);
+                    
+                        }
+                        previousMoment = aMoment;
+                    });
+                    delete previousMoment, count;
+
+                 
+                 
+                  }
+
+
+                    /*
+                    const boxSize = 100;
+                    var
+                            timelineStartTimestamp = this.panStartTimestamp,
+                            timelineEndTimestamp = timelineStartTimestamp + this.secondsPerPixel / this.zoom * width,
+                            timelineDurationInSeconds = moment.unix(timelineEndTimestamp).diff(moment.unix(timelineStartTimestamp), 'seconds'),
+                            timelineSecondsPerPixel = timelineDurationInSeconds / width,
+                            unroundedNumberOfBoxes = width / boxSize,
+                            numberOfBoxes = Math.ceil(unroundedNumberOfBoxes),
+                            momentTimelineStartTimestamp = moment.unix(timelineStartTimestamp),
+                            momentTimelineEndTimestamp = moment.unix(timelineEndTimestamp),
+                            timelineRange = moment().range(momentTimelineStartTimestamp, momentTimelineEndTimestamp),
+                            secondsInEachBox = timelineRange.valueOf() / unroundedNumberOfBoxes;
+//                 
 
                     if (!this.stage) {
                         this.stage = new Kinetic.Stage({
@@ -99,6 +163,9 @@
                     delete previousMoment, count;
 
                     this.stage.add(layer);
+                    */
+
+
                 }
             },
             panStartTimestampChanged: function () {
