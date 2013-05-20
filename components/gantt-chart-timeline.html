@@ -107,8 +107,13 @@
                         if (previousMoment) {
                             
                             x = count++ * boxSize;
-                            ctx.fillText(moment.unix((aMoment.unix() + previousMoment.unix()) / 2).format('LLLL'), x, 25.5);
-                    
+                            
+                            for(r=0;r<100;r++)
+                            {
+                                ctx.fillText(moment.unix((aMoment.unix() + previousMoment.unix()) / 2).format('LLLL'), x, r);
+                            }
+                            
+
                         }
                         previousMoment = aMoment;
                     });
