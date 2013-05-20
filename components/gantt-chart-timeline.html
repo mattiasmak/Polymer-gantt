@@ -100,7 +100,7 @@
                     ctx.font      = "normal 14px arial";
                     ctx.fillStyle = "#ffffff";
                    
-
+                    cnt = 0;
 
                     var previousMoment = null, count = 0;
                     timelineRange.by(secondsInEachBox, function (aMoment) {
@@ -108,18 +108,22 @@
                             
                             x = count++ * boxSize;
                             
-                            for(r=0;r<100;r++)
+
+                            // I'm testing the performance here.
+                            for(r=0;r<50;r++)
                             {
-                                ctx.fillText(moment.unix((aMoment.unix() + previousMoment.unix()) / 2).format('LLLL'), x, r);
+                                ctx.fillText(moment.unix((aMoment.unix() + previousMoment.unix()) / 2).format('LLLL') + r, x, r);
+                                cnt++;
                             }
                             
+
 
                         }
                         previousMoment = aMoment;
                     });
                     delete previousMoment, count;
 
-                 
+                  console.debug(cnt+" texts rendered");
                  
                   }
 
