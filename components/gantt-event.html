@@ -84,15 +84,15 @@
         </style>
         <div id="ganttrow">
             <div id="thumb" on-trackstart="trackStart" on-track="track"
-                 on-trackend="trackEnd">
+                 on-trackend="trackEnd" >
                 <div id="modifyStartHandle" class="handle" on-trackstart="trackStart" on-track="track"
                      on-trackend="trackEnd"></div>
-                      <div id="plus" class="plus">+</div>
-                {{messagecalculated}}
-                <div id="resizeHandle" class="handle" on-trackstart="trackStart" on-track="track"
-                     on-trackend="trackEnd"></div>
+                      <div id="plus" class="plus" on-trackstart="showcards" style="cursor:pointer">+</div>
+                        {{messagecalculated}}
+                <div id="resizeHandle" class="handle" on-trackstart="trackStart" on-track="track" on-trackend="trackEnd"></div>
             </div>
         </div>
+        <div id="trello" on-trackstart="hidecards" style="background:white;padding:25px;border-radius:5px;display:none;position: fixed;top: 10%;left: 10%;z-index:100000;"><img src="resources/trello.png"></div>
     </template>
 
     <script>
@@ -119,6 +119,16 @@
                 this.docalc();
             },
 
+            showcards: function (e)
+            {
+                //this.send('showtrello');
+                this.$.trello.style.display = "block";
+            },
+            hidecards: function (e)
+            {
+                //this.send('showtrello');
+                this.$.trello.style.display = "none";
+            },
             docalc: function () 
             {
                 this.messagecalculated = this.message + "";

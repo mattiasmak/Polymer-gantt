@@ -25,7 +25,7 @@
     <!-- projectStart and panStart is moment("1 Jun 2013").unix() -->
     <gantt-chart-events>
         <template id="events" repeat="{{events}}">
-            <gantt-event message="{{thetitle}}" duration="{{duration}}" start="{{start}}">...</gantt-event>
+            <gantt-event message="{{thetitle}}" duration="{{duration}}" start="{{start}}" on-showtrello="alert('yo!')"></gantt-event>
         </template>
     </gantt-chart-events>
 </gantt-chart>
