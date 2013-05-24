@@ -16,21 +16,8 @@
             #timeline {
                 cursor: pointer;
                 background-color: #8E44AD;
+
                 position: relative;
-            }
-            input[type='range'] {
-                -webkit-appearance: none !important;
-                background:#34495E;
-                height:26px;
-            }
-            input[type='range']::-webkit-slider-thumb {
-                -webkit-appearance: none !important;
-                    
-                width:15px;
-                height:15px;
-                border-radius:50px;
-                background:rgb(240, 61, 37);
-                opacity:0.95;
             }
         </style>
         <div>
@@ -39,9 +26,9 @@
             <div id="timelineContainer">
                 <div id="timeline" on-trackstart="trackStart" on-track="track" on-trackend="trackEnd">
 
-                    <canvas id="timelinecanvas" width="100%" height="50"></canvas>
+                    <canvas id="timelineCanvas" width="100%" height="50"></canvas>
 
-                 </div>
+                </div>
             </div>
         </div>
     </template>
@@ -63,88 +50,37 @@
                 this.reDrawTimeline();
             },
             reDrawTimeline: function () {
+                "use strict";
                 var width = this.$.timeline.clientWidth;
                 if (width) {
-
-
-                    const boxSize = 100;
                     var
                             timelineStartTimestamp = this.panStartTimestamp,
                             timelineEndTimestamp = timelineStartTimestamp + this.secondsPerPixel / this.zoom * width,
-                            timelineDurationInSeconds = moment.unix(timelineEndTimestamp).diff(moment.unix(timelineStartTimestamp), 'seconds'),
-                            timelineSecondsPerPixel = timelineDurationInSeconds / width,
-                            unroundedNumberOfBoxes = width / boxSize,
-                            numberOfBoxes = Math.ceil(unroundedNumberOfBoxes),
-                            momentTimelineStartTimestamp = moment.unix(timelineStartTimestamp),
-                            momentTimelineEndTimestamp = moment.unix(timelineEndTimestamp),
-                            timelineRange = moment().range(momentTimelineStartTimestamp, momentTimelineEndTimestamp),
-                            secondsInEachBox = timelineRange.valueOf() / unroundedNumberOfBoxes;
-
-                    var canvas =  this.$.timelinecanvas;
-                    //console.debug(canvas);
-                    if (canvas && canvas.getContext){
-                 
-                    // use getContext to use the canvas for drawing
-                    var ctx = canvas.getContext('2d');
-                    
-                    canvas.width  = width;
-                    canvas.height = 50;
-
-                    ctx.font      = "normal 12px arial";
-                    ctx.fillStyle = "#ffffff";
-                    
-
-                    duration = timelineEndTimestamp - timelineStartTimestamp;
-                    
-
-
-
-
-                    days = duration / (60*60*25);
-                   
-
-                    startdate = momentTimelineStartTimestamp.startOf('day');
-                    pixels_per_second = duration/width;
-
-                    startoffset = (startdate.unix()-timelineStartTimestamp)/pixels_per_second;
-                    ctx.textAlign = 'center';
-
-                    presentdate = startdate;
-                    for( xx = startoffset ; xx<width ; xx+=(width/days) )
-                    {
-                        presentdate.add('days', 1);
-
-                        
-                        ctx.beginPath();
-                        ctx.moveTo(xx, 35);
-                        ctx.lineTo(xx, 50);
-                        ctx.lineWidth = 1;
-
-                        ctx.strokeStyle = '#ffffff';
-                        ctx.stroke();
-
-                        ctx.fillText(presentdate.format('D ddd'), xx + (width/days)/2 , 47);
-                        
-
+                            momentTimelineStartTimestamp = moment.unix(timelineStartTimestamp);
+                    var canvas = this.$.timelineCanvas;
+                    if (canvas && canvas.getContext) {
+                        var ctx = canvas.getContext('2d');
+                        canvas.width = width;
+                        canvas.height = 50;
+                        ctx.font = "normal 12px arial";
+                        ctx.fillStyle = "#ffffff";
+                        ctx.textAlign = 'center';
+                        var duration = timelineEndTimestamp - timelineStartTimestamp;
+                        var days = duration / (60 * 60 * 24);
+                        var startDate = momentTimelineStartTimestamp.startOf('day');
+                        var pixels_per_second = duration / width;
+                        var startOffset = (startDate.unix() - timelineStartTimestamp) / pixels_per_second;
+                        for (var offset = startOffset; offset < width; offset += (width / days)) {
+                            ctx.beginPath();
+                            ctx.moveTo(offset, 35);
+                            ctx.lineTo(offset, 50);
+                            ctx.lineWidth = 1;
+                            ctx.strokeStyle = '#ffffff';
+                            ctx.stroke();
+                            ctx.fillText(startDate.format('D ddd'), offset + (width / days) / 2, 47);
+                            startDate.add('days', 1);
+                        }
                     }
-
-
-
-
-
-
-
-
-                    
-                   
-
-                 
-                  }
-
-
-                  
-
-
                 }
             },
             panStartTimestampChanged: function () {
@@ -156,7 +92,7 @@
             showZoomControlChanged: function () {
                 this.$.zoomControl.style.display = this.showZoomControl ? 'block' : 'none';
             },
-            trackStart: function (e) {
+            trackStart: function () {
                 this.$.timeline.style.cursor = 'move';
                 this.oldPanStartTimestamp = this.panStartTimestamp;
             },
@@ -165,7 +101,7 @@
 //                this.$.timeline.style.left = this.convertPanStartTimestampToCssLeft(this.newPanStartTimestamp);
                 this.panStartTimestamp = this.newPanStartTimestamp;
             },
-            trackEnd: function (e) {
+            trackEnd: function () {
                 this.$.timeline.style.cursor = null;
                 this.panStartTimestamp = this.newPanStartTimestamp;
                 delete this.oldPanStartTimestamp, this.newPanStartTimestamp;
@@ -180,9 +116,6 @@
                 if (reverse)
                     return value / this.zoom * this.secondsPerPixel;
                 return value * this.zoom / this.secondsPerPixel;
-            },
-            convertPanStartTimestampToCssLeft: function (panStartTimestamp) {
-                return (this.applyZoom(this.startTimestamp - panStartTimestamp)) + 'px'
             }
         });
     </script>
