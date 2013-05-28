@@ -16,10 +16,15 @@
             #timeline {
                 cursor: pointer;
                 background-color: #8E44AD;
-
                 position: relative;
+                color:#FF0000;
             }
+
+           
+
+
         </style>
+        <div id="canvas_styling" style="color:#FFFFFF;display:none;" >Just for controlling the canvas styling. Must be a better way!</div>
         <div>
             <input type="range" min="0.1" max="5" step="0.1" value="{{zoom}}" style="display: none" id="zoomControl">
 
@@ -41,15 +46,19 @@
             panStartTimestamp: moment().startOf('month').unix(),
             stage: null, // the KineticJS stage
             oldZoom: 1.0, // helps with "Scaling should the based on center of screen instead of left"
+            timeline_fillcolor: "#FFFFFF",
             ready: function () {
                 this.zoomChanged();
                 this.showZoomControlChanged();
+
+                timeline_fillcolor = this.$.canvas_styling.style.color;
 
                 this.$.timeline.setAttribute('touch-action', 'pan-y');
             },
             insertedCallback: function () {
                 this.reDrawTimeline();
             },
+            
             reDrawTimeline: function () {
                 "use strict";
                 var width = this.$.timeline.clientWidth;
@@ -64,9 +73,12 @@
                         canvas.width = width;
                         canvas.height = 50;
                         ctx.font = "normal 12px arial";
-                        ctx.fillStyle = "#ffffff";
+                        ctx.fillStyle = timeline_fillcolor;
                         ctx.textAlign = 'center';
                         var duration = timelineEndTimestamp - timelineStartTimestamp;
+
+
+                        // Render days
                         var days = duration / (60 * 60 * 24);
                         var startDate = momentTimelineStartTimestamp.startOf('day');
                         var pixels_per_second = duration / width;
@@ -76,11 +88,31 @@
                             ctx.moveTo(offset, 35);
                             ctx.lineTo(offset, 50);
                             ctx.lineWidth = 1;
-                            ctx.strokeStyle = '#ffffff';
+                            ctx.strokeStyle = timeline_fillcolor;
                             ctx.stroke();
                             ctx.fillText(startDate.format('D ddd'), offset + (width / days) / 2, 47);
                             startDate.add('days', 1);
                         }
+
+
+                        // Render Weeks
+                        momentTimelineStartTimestamp = moment.unix(timelineStartTimestamp);
+                        var weeks = duration / (60 * 60 * 24 * 7);
+                        var startDate = momentTimelineStartTimestamp.startOf('week');
+                        //var pixels_per_second = duration / width;
+                        var startOffset = (startDate.unix() - timelineStartTimestamp) / pixels_per_second;
+                        for (var offset = startOffset; offset < width; offset += (width / weeks)) {
+                            ctx.beginPath();
+                            ctx.moveTo(offset, 17);
+                            ctx.lineTo(offset, 32);
+                            ctx.lineWidth = 1;
+                            ctx.strokeStyle = timeline_fillcolor;
+                            ctx.stroke();
+                            ctx.fillText("Week "+ startDate.format('w'), offset + (width / weeks) / 2, 30);
+                            startDate.add('weeks', 1);
+                        }
+
+
                     }
                 }
             },
