@@ -87,7 +87,7 @@
                  on-trackend="trackEnd" >
                 <div id="modifyStartHandle" class="handle" on-trackstart="trackStart" on-track="track"
                      on-trackend="trackEnd"></div>
-                      <div id="plus" class="plus" on-trackstart="showcards" style="cursor:pointer">+</div>
+                      <div id="plus" class="plus" style="cursor:pointer">+</div>
                         {{messagecalculated}}
                 <div id="resizeHandle" class="handle" on-trackstart="trackStart" on-track="track" on-trackend="trackEnd"></div>
             </div>
@@ -119,11 +119,6 @@
                 this.docalc();
             },
 
-            showcards: function (e)
-            {
-                //this.send('showtrello');
-                this.$.trello.style.display = "block";
-            },
             hidecards: function (e)
             {
                 //this.send('showtrello');
