@@ -21,11 +21,11 @@
 </head>
 <body>
 
-<gantt-chart zoom="1" projectStart="1370026800" showZoomControl="1" panStart="1370026800">
+<gantt-chart id="thechart" zoom="1" projectStart="1370026800" showZoomControl="1" panStart="1370026800">
     <!-- projectStart and panStart is moment("1 Jun 2013").unix() -->
     <gantt-chart-events>
         <template id="events" repeat="{{events}}">
-            <gantt-event message="{{thetitle}}" duration="{{duration}}" start="{{start}}" on-showtrello="alert('yo!')"></gantt-event>
+            <gantt-event id="{{thetitle}}" message="{{thetitle}}" duration="{{duration}}" start="{{start}}" on-showtrello="alert('yo!')"></gantt-event>
         </template>
     </gantt-chart-events>
 </gantt-chart>
@@ -54,5 +54,6 @@
 </script>
 
 
-</body>
+
+    </body>
 </html>

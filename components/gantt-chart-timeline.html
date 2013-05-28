@@ -40,6 +40,7 @@
             secondsPerPixel: 864, // show 1 day as 100px when zoom is 1.0
             panStartTimestamp: moment().startOf('month').unix(),
             stage: null, // the KineticJS stage
+            oldZoom: 1.0, // helps with "Scaling should the based on center of screen instead of left"
             ready: function () {
                 this.zoomChanged();
                 this.showZoomControlChanged();
@@ -87,6 +88,10 @@
                 this.reDrawTimeline();
             },
             zoomChanged: function () {
+                "use strict";
+                var centerTimestamp = this.panStartTimestamp + (this.applyZoom(this.$.timeline.clientWidth / 2, true, this.oldZoom));
+                this.panStartTimestamp = centerTimestamp - (this.applyZoom(this.$.timeline.clientWidth / 2, true));
+                this.oldZoom = this.zoom;
                 this.reDrawTimeline();
             },
             showZoomControlChanged: function () {
@@ -112,10 +117,11 @@
             secondsPerPixelChanged: function () {
                 console.warn('TODO');
             },
-            applyZoom: function (value, reverse) {
+            applyZoom: function (value, reverse, customZoom) {
+                customZoom = (typeof customZoom === "undefined") ? this.zoom : customZoom;
                 if (reverse)
-                    return value / this.zoom * this.secondsPerPixel;
-                return value * this.zoom / this.secondsPerPixel;
+                    return value / customZoom * this.secondsPerPixel;
+                return value * customZoom / this.secondsPerPixel;
             }
         });
     </script>
