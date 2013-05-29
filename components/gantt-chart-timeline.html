@@ -52,13 +52,12 @@
                 this.showZoomControlChanged();
 
                 timeline_fillcolor = this.$.canvas_styling.style.color;
-
+               
                 this.$.timeline.setAttribute('touch-action', 'pan-y');
             },
             insertedCallback: function () {
                 this.reDrawTimeline();
             },
-            
             reDrawTimeline: function () {
                 "use strict";
                 var width = this.$.timeline.clientWidth;
@@ -98,7 +97,7 @@
                         // Render Weeks
                         momentTimelineStartTimestamp = moment.unix(timelineStartTimestamp);
                         var weeks = duration / (60 * 60 * 24 * 7);
-                        var startDate = momentTimelineStartTimestamp.startOf('week');
+                        var startDate = momentTimelineStartTimestamp.startOf('week').day(0);
                         //var pixels_per_second = duration / width;
                         var startOffset = (startDate.unix() - timelineStartTimestamp) / pixels_per_second;
                         for (var offset = startOffset; offset < width; offset += (width / weeks)) {

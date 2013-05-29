@@ -92,7 +92,7 @@
                 <div id="resizeHandle" class="handle" on-trackstart="trackStart" on-track="track" on-trackend="trackEnd"></div>
             </div>
         </div>
-        <div id="trello" on-trackstart="hidecards" style="background:white;padding:25px;border-radius:5px;display:none;position: fixed;top: 10%;left: 10%;z-index:100000;"><img src="resources/trello.png"></div>
+       
     </template>
 
     <script>
@@ -144,6 +144,10 @@
                 this.$.thumb.style.left = this.convertStartToCssLeft(this.start);
             },
 
+            panStartChanged: function ()
+            {
+                //this.$.thumb.style.left = this.convertStartToCssLeft(this.start);
+            },
             convertStartToCssLeft: function (startValue)
             {
                 return (this.applyZoom(startValue - this.projectStart)) + "px";
