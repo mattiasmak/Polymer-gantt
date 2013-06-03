@@ -1,0 +1,131 @@
+<element name="gantt-chart-background" attributes="zoom startTimestamp secondsPerPixel panStartTimestamp showZoomControl ">
+    <template>
+        <style>
+            @host {
+              * {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                display: block;
+              }
+            }
+            #backgroundContainer {
+                cursor: pointer;
+              
+                width:100%;
+                position: relative;
+            }
+            #backgroundCanvas {
+                cursor: pointer;
+                background-color: #eee;
+                width:100%;
+                position: relative;
+            }
+        </style>
+        <div id="backgroundContainer">
+            <canvas id="backgroundCanvas" width="100%"></canvas>
+        </div>
+    </template>
+    <script>
+       
+        
+        Polymer.register(this, {
+            zoom: 1.0,
+            showZoomControl: false,
+            startTimestamp: moment().startOf('month').unix(),
+            secondsPerPixel: 864, // show 1 day as 100px when zoom is 1.0
+            panStartTimestamp: moment().startOf('month').unix(),
+            stage: null, // the KineticJS stage
+            oldZoom: null, // helps with "Scaling should the based on center of screen instead of left"
+      
+            ready: function () {
+                //this.showZoomControlChanged();
+               console.debug("a")
+            },
+            insertedCallback: function () {
+                this.reDrawBackground();
+            },
+            reDrawBackground: function () {
+                "use strict";
+
+                
+                var width = this.$.backgroundCanvas.clientWidth;
+                var height = this.$.backgroundCanvas.clientHeight;
+                
+                if (width) {
+                    console.debug(this.renderheight);
+                    var timelineEndTimestamp = this.panStartTimestamp + this.secondsPerPixel / this.zoom * width;
+
+                    var canvas = this.$.backgroundCanvas;
+                    if (canvas && canvas.getContext) {
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        var ctx = canvas.getContext('2d');
+
+                        ctx.font = "normal 12px arial";
+                        ctx.fillStyle = "#000";
+                        ctx.textAlign = 'center';
+                        ctx.strokeStyle = '#000';
+                        ctx.lineWidth = 10;
+
+                        var duration = timelineEndTimestamp - this.panStartTimestamp;
+                        var pixels_per_second = duration / width;
+                        
+
+                        // Render days
+                        var days = duration / (60 * 60 * 24);
+                        var startDate = moment.unix(this.panStartTimestamp).startOf('day');
+                        
+
+                        for (var offset = (startDate.unix() - this.panStartTimestamp) / pixels_per_second; offset < width; offset += (width / days), startDate.add('days', 1)) {
+                            
+                            //offset +=(width / days)/2;
+
+                            if( startDate.dayOfYear()%2 == 0 )
+                            {
+                                ctx.strokeStyle = '#e3e3e3';
+                                
+                            }else
+                            {
+
+                                ctx.strokeStyle = '#FFF';
+                            }
+                            ctx.beginPath();
+                            ctx.lineWidth = (width / days);
+                            ctx.moveTo(offset+(width / days)/2, 0);
+                            ctx.lineTo(offset+(width / days)/2, 600);
+                            ctx.stroke();
+                        }
+
+                        
+
+
+                    }
+
+                }
+
+            },
+            panStartTimestampChanged: function () {
+                this.reDrawBackground();
+            },
+            zoomChanged: function () {
+                "use strict";
+                
+                this.oldZoom = this.zoom;
+                this.reDrawBackground();
+            },
+            
+            
+            startTimestampChanged: function () {
+                this.reDrawBackground();
+            },
+            secondsPerPixelChanged: function () {
+                console.warn('TODO');
+            }
+        });
+    </script>
+</element>

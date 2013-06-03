@@ -1,8 +1,24 @@
 <element name="gantt-chart" attributes="zoom projectStart showZoomControl panStart">
     <template>
         <style>
-            #ganttContainer {
+             #ganttContainer {
                 overflow: hidden;
+            }
+
+            #background
+            {
+                position:absolute;
+                top:0px;
+                bottom:0px;
+                left:0px;
+                right:0px;
+
+            }
+
+            #events
+            {
+           
+                position: relative;
             }
         </style>
         <div id="ganttContainer">
@@ -12,7 +28,15 @@
                                       startTimestamp="{{projectStart}}"
                                       secondsPerPixel="{{secondsPerPixel}}"></gantt-chart-timeline>
             </div>
+           
+
             <div id="events">
+                 <div id="background">
+            <gantt-chart-background 
+                                      panStartTimestamp="{{panStart}}" zoom="{{zoom}}"
+                                      startTimestamp="{{projectStart}}"
+                                      secondsPerPixel="{{secondsPerPixel}}"></gantt-chart-background>
+            </div>
                 <content select="gantt-chart-events"></content>
             </div>
         </div>
