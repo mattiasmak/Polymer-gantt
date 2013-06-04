@@ -14,7 +14,7 @@
             }
             #backgroundContainer {
                 cursor: pointer;
-              
+               
                 width:100%;
                 position: relative;
             }
@@ -88,17 +88,14 @@
                             if( startDate.dayOfYear()%2 == 0 )
                             {
                                 ctx.strokeStyle = '#e3e3e3';
+                                ctx.beginPath();
+                                ctx.lineWidth = (width / days);
+                                ctx.moveTo(offset+(width / days)/2, 0);
+                                ctx.lineTo(offset+(width / days)/2, 600);
+                                ctx.stroke();
                                 
-                            }else
-                            {
-
-                                ctx.strokeStyle = '#FFF';
                             }
-                            ctx.beginPath();
-                            ctx.lineWidth = (width / days);
-                            ctx.moveTo(offset+(width / days)/2, 0);
-                            ctx.lineTo(offset+(width / days)/2, 600);
-                            ctx.stroke();
+                           
                         }
 
                         
@@ -107,6 +104,8 @@
                     }
 
                 }
+
+                //setTimeout(this.reDrawBackground, 1);
 
             },
             panStartTimestampChanged: function () {

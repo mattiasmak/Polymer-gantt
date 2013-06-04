@@ -26,7 +26,7 @@
             }
         </style>
         <div>
-            <input type="range" min="0.1" max="5" step="0.1" value="{{zoom}}" style="display: none" id="zoomControl">
+            <input type="range" min="0.01" max="5" step="0.01" value="{{zoom}}" style="display: none" id="zoomControl">
 
             <div id="timelineContainer">
                 <div id="timeline" on-trackstart="trackStart" on-track="track" on-trackend="trackEnd">
@@ -118,7 +118,10 @@
                     
                             ctx.moveTo(offset, 41);
                             ctx.lineTo(offset, 56);
-                            ctx.fillText(startDate.format('D ddd'), offset + (width / days) / 2, 53);
+                            if(days<40)
+                                ctx.fillText(startDate.format('D ddd'), offset + (width / days) / 2, 53);
+                            else
+                                ctx.fillText(startDate.format('D'), offset + (width / days) / 2, 53);
                         }
 
                         // Render Weeks
