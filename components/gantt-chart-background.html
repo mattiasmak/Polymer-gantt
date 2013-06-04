@@ -56,7 +56,7 @@
                 var height = this.$.backgroundCanvas.clientHeight;
                 
                 if (width) {
-                    console.debug(this.renderheight);
+                    
                     var timelineEndTimestamp = this.panStartTimestamp + this.secondsPerPixel / this.zoom * width;
 
                     var canvas = this.$.backgroundCanvas;
@@ -66,11 +66,7 @@
                         canvas.height = height;
                         var ctx = canvas.getContext('2d');
 
-                        ctx.font = "normal 12px arial";
-                        ctx.fillStyle = "#000";
-                        ctx.textAlign = 'center';
-                        ctx.strokeStyle = '#000';
-                        ctx.lineWidth = 10;
+                       
 
                         var duration = timelineEndTimestamp - this.panStartTimestamp;
                         var pixels_per_second = duration / width;
@@ -80,24 +76,23 @@
                         var days = duration / (60 * 60 * 24);
                         var startDate = moment.unix(this.panStartTimestamp).startOf('day');
                         
-
+                        
+                        
+                        ctx.beginPath();
+                        ctx.strokeStyle = '#e3e3e3';
+                        ctx.lineWidth = (width / days);
                         for (var offset = (startDate.unix() - this.panStartTimestamp) / pixels_per_second; offset < width; offset += (width / days), startDate.add('days', 1)) {
                             
-                            //offset +=(width / days)/2;
-
                             if( startDate.dayOfYear()%2 == 0 )
                             {
-                                ctx.strokeStyle = '#e3e3e3';
-                                ctx.beginPath();
-                                ctx.lineWidth = (width / days);
-                                ctx.moveTo(offset+(width / days)/2, 0);
+                               ctx.moveTo(offset+(width / days)/2, 0);
                                 ctx.lineTo(offset+(width / days)/2, 600);
-                                ctx.stroke();
                                 
                             }
                            
                         }
-
+                        ctx.stroke();
+                        
                         
 
 
