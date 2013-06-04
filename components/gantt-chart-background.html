@@ -66,17 +66,11 @@
                         canvas.height = height;
                         var ctx = canvas.getContext('2d');
 
-                       
-
                         var duration = timelineEndTimestamp - this.panStartTimestamp;
                         var pixels_per_second = duration / width;
                         
-
-                        // Render days
                         var days = duration / (60 * 60 * 24);
                         var startDate = moment.unix(this.panStartTimestamp).startOf('day');
-                        
-                        
                         
                         ctx.beginPath();
                         ctx.strokeStyle = '#e3e3e3';
@@ -85,9 +79,8 @@
                             
                             if( startDate.dayOfYear()%2 == 0 )
                             {
-                               ctx.moveTo(offset+(width / days)/2, 0);
-                                ctx.lineTo(offset+(width / days)/2, 600);
-                                
+                                ctx.moveTo(offset+(width / days)/2, 0);
+                                ctx.lineTo(offset+(width / days)/2, height);
                             }
                            
                         }
