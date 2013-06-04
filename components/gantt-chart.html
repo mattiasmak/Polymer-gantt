@@ -2,20 +2,52 @@
     <template>
         <style>
             #ganttContainer {
-                overflow: hidden;
-            }
+		        overflow: hidden;
+         		position: absolute;
+				top:0px;
+				left: 0px;
+				right: 0px;
+				bottom: 0px;
+			}
+			#background {
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				right: 0px;
+				bottom: 0px;
+			}
+			#timeline {
+				position: absolute;
+				top:0px;
+				height:50px;
+				left: 0px;
+				right: 0px;
+			}
+			#events {
+				position: absolute;
+				cursor: pointer;
+				top:100px;
+				left: 0px;
+				right: 0px;
+				bottom: 0px;
+			}
         </style>
         <div id="ganttContainer">
+			<div id="background">
+                <gantt-chart-background panStartTimestamp="{{panStart}}" zoom="{{zoom}}"
+                                      startTimestamp="{{projectStart}}"
+                                      secondsPerPixel="{{secondsPerPixel}}"></gantt-chart-timeline>
+            </div>
             <div id="timeline">
                 <gantt-chart-timeline showZoomControl="{{showZoomControl}}"
                                       panStartTimestamp="{{panStart}}" zoom="{{zoom}}"
                                       startTimestamp="{{projectStart}}"
                                       secondsPerPixel="{{secondsPerPixel}}"></gantt-chart-timeline>
             </div>
-            <div id="events">
+            <div id="events"  on-trackstart="trackStart" on-track="track" on-trackend="trackEnd">
                 <content select="gantt-chart-events"></content>
             </div>
-        </div>
+		</div>
     </template>
     <script>
         Polymer.register(this, {
@@ -25,10 +57,13 @@
             panStart: moment().startOf('month').unix(),
             secondsPerPixel: 864, // show 1 day as 100px when zoom is 1.0
             ready: function () {
+				//this.$.background.clientTop = 300px;
+                //this.$.background.clientHeight = this.$.clientHeight;
                 this.zoomChanged();
                 this.projectStartChanged();
                 this.panStartChanged();
                 this.secondsPerPixelChanged();
+		
             },
             zoomChanged: function () {
                 var events = this.querySelector('gantt-chart-events');
@@ -54,6 +89,20 @@
                 if (reverse)
                     return value / this.zoom * this.secondsPerPixel;
                 return value * this.zoom / this.secondsPerPixel;
+            },
+			trackStart: function () {
+				console.log("adsfaf");
+                this.$.events.style.cursor = 'move';
+                this.oldPanStartTimestamp = this.panStart;
+            },
+            track: function (e) {
+                this.newPanStartTimestamp = this.oldPanStartTimestamp - this.applyZoom(e.dx, true);
+                this.panStart = this.newPanStartTimestamp;
+            },
+            trackEnd: function () {
+                this.$.events.style.cursor = null;
+                this.panStart = this.newPanStartTimestamp;
+                delete this.oldPanStartTimestamp, this.newPanStartTimestamp;
             },
             convertPanStartToCssLeft: function (panStart) {
                 return (this.applyZoom(this.projectStart - panStart)) + 'px'

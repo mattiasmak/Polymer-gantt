@@ -8,12 +8,12 @@
 
     <link rel="import" href="components/gantt-chart.html">
     <link rel="import" href="components/gantt-chart-timeline.html">
+    <link rel="import" href="components/gantt-chart-background.html">
     <link rel="import" href="components/gantt-chart-events.html">
     <link rel="import" href="components/gantt-event.html">
 
     <style>
       body{
-        background: url(components/resources/layout_grid.png);
       }
     </style>
 
@@ -32,6 +32,11 @@
 <script>
     var t = document.getElementById('events');
 
+	var timeObject = {
+		scale : (Math.max(window.clientWidth, 20)/(30*24*3600)),
+		wStartTime: moment().startOf('month').unix(),
+	};
+	
     var model = {
         events: [
             { thetitle: 'An event', duration: moment.duration(4, 'days').asSeconds(), start: moment("1 Jun 2013").unix() },

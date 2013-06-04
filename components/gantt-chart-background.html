@@ -1,0 +1,156 @@
+<element name="gantt-chart-background" attributes="zoom startTimestamp secondsPerPixel panStartTimestamp rowHeight panY">
+    <template>
+        <style>
+            @host {
+              * {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                display: block;
+              }
+            }
+
+            #background {
+            	position: absolute;
+				left: 0px;
+				right: 0px;
+				top: 0px;
+				bottom: 0px;
+				cursor: pointer;
+                background-image: url("resources/7.jpg");
+	          }
+        </style>
+	    <div id="background" on-trackstart="trackStart" on-track="track" on-trackend="trackEnd">
+				<canvas id="backgroundCanvas" width="100%" height="100%"></canvas>
+		</div>
+    </template>
+    <script>
+        Polymer.register(this, {
+            zoom: 1.0,
+            showZoomControl: false,
+            startTimestamp: moment().startOf('month').unix(),
+            secondsPerPixel: 864, // show 1 day as 100px when zoom is 1.0
+			panY: 0,
+			rowHeight: 20,
+            panStartTimestamp: moment().startOf('month').unix(),
+			backgroundStartTimestamp: 0,
+            stage: null, // the KineticJS stage
+            oldZoom: 1.0, // helps with "Scaling should the based on center of screen instead of left"
+         	
+			
+            ready: function () {
+                this.zoomChanged();
+				this.backgroundStartTimestamp = this.panStartTimestamp;
+                this.$.background.setAttribute('touch-action', 'pan-y');
+				window.addEventListener("resize",this.resize.bind(this), false);
+			},
+    
+			resize: function (event) {
+				this.reDrawTimeline();
+            },
+            
+			insertedCallback: function () {
+                this.reDrawTimeline();
+            },
+            
+			reDrawTimeline: function () {
+                "use strict";
+				//if (!this.clientHeight)
+					//return;
+				
+				var xPos = -Math.floor((this.panStartTimestamp - this.backgroundStartTimestamp)/this.secondsPerPixel*this.zoom);
+				this.$.background.style.backgroundPosition = xPos +"px 0px";
+				
+				  
+				var width = this.$.background.clientWidth;
+				if (width) {
+					var canvas = this.$.backgroundCanvas;
+                    if (canvas && canvas.getContext) {
+                        var ctx = canvas.getContext('2d');
+						canvas.width = width;
+						canvas.height = this.$.background.clientHeight;
+                        this.drawVerticalLines(ctx, width, this.$.background.clientHeight);
+                    }
+                }
+            },
+			
+            drawHorizontalLines: function (canvas) {
+			},
+			
+			drawVerticalLines: function (ctx, width, height) {
+			    ctx.strokeStyle = "#10FF00";
+                var  timelineStartTimestamp = this.panStartTimestamp;
+                var  timelineEndTimestamp = timelineStartTimestamp + this.secondsPerPixel / this.zoom * width;
+                var duration = timelineEndTimestamp - timelineStartTimestamp,
+                momentTimelineStartTimestamp = moment.unix(timelineStartTimestamp);
+            
+				 ctx.strokeStyle = "#888888";
+              	// Render days
+                var days = duration / (60 * 60 * 24);
+                var startDate = momentTimelineStartTimestamp.startOf('day');
+				var even = Math.floor(startDate/(3600000*24))%2 == 0;
+                var pixels_per_second = duration / width;
+                var startOffset = (startDate.unix() - timelineStartTimestamp) / pixels_per_second;
+                for (var offset = startOffset; offset < width; offset += (width / days)) {
+					if (even) {
+						ctx.fillStyle = "rgba(147,147,147,0.3)";
+                		even = false;
+					}
+					else {
+						ctx.fillStyle = "rgba(255,255,255,0.3)";
+						even = true;
+					}
+					ctx.fillRect(offset, 0, width/days, height);
+					ctx.beginPath();
+                    ctx.moveTo(offset, 0);
+                    ctx.lineTo(offset, height);
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                           
+                }
+			},
+            
+			panStartTimestampChanged: function () {
+                this.reDrawTimeline();
+            },
+            zoomChanged: function () {
+                "use strict";
+                var centerTimestamp = this.panStartTimestamp + (this.applyZoom(this.$.background.clientWidth / 2, true, this.oldZoom));
+                this.panStartTimestamp = centerTimestamp - (this.applyZoom(this.$.background.clientWidth / 2, true));
+                this.oldZoom = this.zoom;
+                this.reDrawTimeline();
+            },
+           
+            trackStart: function () {
+                console.log("start");
+				this.$.background.style.cursor = 'move';
+                this.oldPanStartTimestamp = this.panStartTimestamp;
+            },
+            track: function (e) {
+                this.newPanStartTimestamp = this.oldPanStartTimestamp - this.applyZoom(e.dx, true);
+//                this.$.timeline.style.left = this.convertPanStartTimestampToCssLeft(this.newPanStartTimestamp);
+                this.panStartTimestamp = this.newPanStartTimestamp;
+            },
+            trackEnd: function () {
+                this.$.background.style.cursor = null;
+                this.panStartTimestamp = this.newPanStartTimestamp;
+                delete this.oldPanStartTimestamp, this.newPanStartTimestamp;
+            },
+            startTimestampChanged: function () {
+                this.reDrawTimeline();
+            },
+            secondsPerPixelChanged: function () {
+                console.warn('TODO');
+            },
+            applyZoom: function (value, reverse, customZoom) {
+                customZoom = (typeof customZoom === "undefined") ? this.zoom : customZoom;
+                if (reverse)
+                    return value / customZoom * this.secondsPerPixel;
+                return value * customZoom / this.secondsPerPixel;
+            }
+        });
+    </script>
+</element>
