@@ -1,7 +1,7 @@
 <element name="gantt-chart" attributes="zoom projectStart showZoomControl panStart">
     <template>
         <style>
-             #ganttContainer {
+            #ganttContainer {
                 overflow: hidden;
             }
 
@@ -14,18 +14,12 @@
                 right:0px;
 
             }
-            #timeline
-            {
-                padding:0;
-                margin:0;  
-            }
+
             #events
             {
-                border:1px solid white;
-                padding:0;
-                margin:0;
                 position: relative;
             }
+
         </style>
         <div id="ganttContainer">
             <div id="timeline">
@@ -37,12 +31,12 @@
            
 
             <div id="events">
-                <div id="background">
-                    <gantt-chart-background 
+                 <div id="background">
+            <gantt-chart-background 
                                       panStartTimestamp="{{panStart}}" zoom="{{zoom}}"
                                       startTimestamp="{{projectStart}}"
                                       secondsPerPixel="{{secondsPerPixel}}"></gantt-chart-background>
-                </div>
+            </div>
                 <content select="gantt-chart-events"></content>
             </div>
         </div>
@@ -79,14 +73,6 @@
                 var events = this.querySelector('gantt-chart-events');
                 if (events)
                     events.secondsPerPixel = this.secondsPerPixel;
-            },
-            applyZoom: function (value, reverse) {
-                if (reverse)
-                    return value / this.zoom * this.secondsPerPixel;
-                return value * this.zoom / this.secondsPerPixel;
-            },
-            convertPanStartToCssLeft: function (panStart) {
-                return (this.applyZoom(this.projectStart - panStart)) + 'px'
             }
         });
     </script>

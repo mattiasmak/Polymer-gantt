@@ -14,7 +14,7 @@
             }
 
             #timeline {
-                cursor: pointer;
+                cursor: ew-resize;
                 background-color: #8E44AD;
 
                 position: relative;
@@ -24,9 +24,15 @@
                 color: #662211;
                 display: block;
             }
+            
+            #zoomControl
+            {
+                width:300px;
+                display: none;
+            }
         </style>
         <div>
-            <input type="range" min="0.05" max="5" step="0.01" value="{{zoom}}" style="display: none" id="zoomControl">
+            <input type="range" min="0.05" max="5" step="0.01" value="{{zoom}}" id="zoomControl">
 
             <div id="timelineContainer">
                 <div id="timeline" on-trackstart="trackStart" on-track="track" on-trackend="trackEnd">
@@ -163,7 +169,7 @@
                 this.$.zoomControl.style.display = this.showZoomControl ? 'block' : 'none';
             },
             trackStart: function () {
-                this.$.timeline.style.cursor = 'move';
+                //this.$.timeline.style.cursor = 'move';
                 this.oldPanStartTimestamp = this.panStartTimestamp;
             },
             track: function (e) {

@@ -1,236 +1,208 @@
-<element name="gantt-event" attributes="message duration start projectStart secondsPerPixel">
+<element name="gantt-event" attributes="message duration start projectStart secondsPerPixel"
+         on-start-changed="childStartChangedHandler" on-duration-changed="childDurationChangedHandler">
 
+    <link rel="stylesheet" href="resources/gantt-event.css">
     <template>
 
-        <style>
-            @host {
-              * {
-                -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                -khtml-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-                display: block;
-
-              }
-            }
-
-            #ganttrow {
-                padding: 5px 0;
-                margin: 5px 0;
-                
-
-            }
-
-            #thumb {
-                background-color: #3498db;
-                padding-bottom: 12px;
-                padding-top: 13px;
-                border-radius: 6px;
-                vertical-align: middle;
-                text-align: center;
-                font: 16.5px/1.231 "Lato", sans-serif;
-                color: white;
-                font-weight: bold;
-                height: 20px;
-                overflow: hidden;
-                display: inline-block;
-                cursor: auto;
-                position: relative;
-                padding-left: 0;
-                padding-right: 0;
-                min-width: 20px;
-            }
-
-            .plus {
-                position: absolute;
-                height:100%;
-                vertical-align: middle;
-                width: 10px;
-                left:10px;
-               
-            }
-
-            .handle {
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                width: 10px;
-                cursor: pointer;
-            }
-
-            #resizeHandle {
-                //background-color: yellow;
-                right: 0px;
-            }
-
-            #modifyStartHandle {
-                //background-color: red;
-                left: 0px;
-            }
-
-             #resizeHandle:hover {
-                background-color: white;
-                opacity: 0.4;
-                border-radius: 6px;
-            }
-
-            #modifyStartHandle:hover {
-                background-color: white;
-                opacity: 0.4;
-                border-radius: 6px;
-            }
-        </style>
-        <div id="ganttrow">
-            <div id="thumb" on-trackstart="trackStart" on-track="track"
-                 on-trackend="trackEnd" >
-                <div id="modifyStartHandle" class="handle" on-trackstart="trackStart" on-track="track"
-                     on-trackend="trackEnd"></div>
-                      <div id="plus" class="plus" style="cursor:pointer">+</div>
-                        {{messagecalculated}}
-                <div id="resizeHandle" class="handle" on-trackstart="trackStart" on-track="track" on-trackend="trackEnd"></div>
-            </div>
+         <div id="ganttRow">
+        <div id="thumb" on-trackstart="trackStart" on-track="track"
+             on-trackend="trackEnd">
+            <div id="modifyStartHandle" class="handle" on-trackstart="trackStart" on-track="track"
+                 on-trackend="trackEnd"></div>
+            <span id="subEventsExpander" on-click="expanderClicked">-</span>
+            {{message}}
+            <div id="resizeHandle" class="handle" on-trackstart="trackStart" on-track="track"
+                 on-trackend="trackEnd"></div>
         </div>
-       
-    </template>
+    </div>
+    <div id="subEventsContainer">
+        <div id="subEventsContainerChild">
+            <content selector="gantt-chart-events"></content>
+        </div>
+    </div>
+</template>
 
-    <script>
-        Polymer.register(this, {
-            message: '',
-            duration: 500,
-            start: 0,
-            messagecalculated: '',
-            state: null, // null, 'beingResized', 'startBeingModified' or 'beingMoved'
-            zoom: 1.0,
-            secondsPerPixel: 864, // show 1 day as 100px when zoom is 1.0
-            projectStart: moment().startOf('month').unix(),
-            
-            ready: function ()
-            {
-                this.$.resizeHandle.setAttribute('touch-action', 'pan-y');
-                this.$.modifyStartHandle.setAttribute('touch-action', 'pan-y');
-                this.$.thumb.setAttribute('touch-action', 'pan-y');
-                this.durationChanged();
-            },
+<script>
+    Polymer.register(this, {
+        message: '',
+        duration: 500, // This event's duration in seconds
+        start: 0, // This event's start timestamp
+        messageCalculated: '',
+        state: null, // null, 'beingResized', 'startBeingModified' or 'beingMoved'
+        zoom: 1.0,
+        secondsPerPixel: 864, // show 1 day as 100px when zoom is 1.0
+        projectStart: moment().startOf('month').unix(),
+        justMoved: false, // bool, used by startChanged to decide whether to move sub-events
+        oldStart: 0, // used by startChanged to calculate the offset to move sub-events by
+        subEventsContainerStart: 0,
+        ready: function () {
+            this.$.resizeHandle.setAttribute('touch-action', 'pan-y');
+            this.$.modifyStartHandle.setAttribute('touch-action', 'pan-y');
+            this.$.thumb.setAttribute('touch-action', 'pan-y');
+            this.durationChanged();
 
-            messageChanged: function () 
-            {
-                this.docalc();
-            },
-
-            hidecards: function (e)
-            {
-                //this.send('showtrello');
-                this.$.trello.style.display = "none";
-            },
-            docalc: function () 
-            {
-                this.messagecalculated = this.message + "";
-            },
-
-            durationChanged: function ()
-            {
-                this.$.thumb.style.width = this.convertDurationToCssWidth(this.duration);
-            },
-
-            convertDurationToCssWidth: function (duration)
-            {
-                return this.applyZoom(duration) + "px";
-            },
-
-            startChanged: function ()
-            {
-                this.$.thumb.style.left = this.convertStartToCssLeft(this.start);
-            },
-
-            panStartChanged: function ()
-            {
-                //this.$.thumb.style.left = this.convertStartToCssLeft(this.start);
-            },
-            convertStartToCssLeft: function (startValue)
-            {
-                return (this.applyZoom(startValue - this.projectStart)) + "px";
-            },
-
-            applyZoom: function (value, reverse)
-            {
-                if (reverse)
-                    return value / this.zoom * this.secondsPerPixel;
-                return value * this.zoom / this.secondsPerPixel;
-            },
-
-            zoomChanged: function ()
-            {
-                this.startChanged();
-                this.durationChanged();
-                this.panStartChanged();
-            },
-
-            trackStart: function (e)
-            {
-                if (e.target == this.$.resizeHandle) {
-                    this.state = 'beingResized';
-                    this.$.resizeHandle.style.cursor = 'e-resize';
-                    this.oldDuration = this.duration;
-                }
-                else if (e.target == this.$.modifyStartHandle) {
-                    this.state = 'startBeingModified';
-                    this.$.modifyStartHandle.style.cursor = 'w-resize';
-                    this.oldStart = this.start;
-                    this.oldDuration = this.duration;
-                } else if (e.target == this.$.thumb) {
-                    this.state = 'beingMoved';
-                    this.$.thumb.style.cursor = 'move';
-                    this.oldStart = this.start;
-                }
-            },
-
-            track: function (e)
-            {
-                if (this.state == 'beingResized') {
-                    this.$.thumb.style.width = this.convertDurationToCssWidth(this.newDuration = (this.oldDuration + this.applyZoom(e.dx, true)));
-                } else if (this.state == 'startBeingModified') {
-                    this.$.thumb.style.left = this.convertStartToCssLeft(this.newStart = (this.oldStart + this.applyZoom(e.dx, true)));
-                    this.$.thumb.style.width = this.convertDurationToCssWidth(this.newDuration = (this.oldDuration - this.applyZoom(e.dx, true)));
-                } else if (this.state == 'beingMoved') {
-                    this.$.thumb.style.left = this.convertStartToCssLeft(this.newStart = (this.oldStart + this.applyZoom(e.dx, true)));
-                }
-            },
-
-            trackEnd: function ()
-            {
-                if (this.state == 'beingResized') {
-                    this.$.resizeHandle.style.cursor = null;
-                    this.duration = this.newDuration;
-                    delete this.oldDuration, this.newDuration;
-                    this.state = null;
-                } else if (this.state == 'startBeingModified') {
-                    this.$.modifyStartHandle.style.cursor = null;
-                    this.start = this.newStart;
-                    this.duration = this.newDuration;
-                    delete this.oldStart, this.newStart;
-                    delete this.oldDuration, this.newDuration;
-                    this.state = null;
-                } else if (this.state == 'beingMoved') {
-                    this.$.thumb.style.cursor = null;
-                    this.start = this.newStart;
-                    delete this.oldStart, this.newStart;
-                    this.state = null;
-                }
-                // make valueChanged calls immediately
-                dirtyCheck();
-            },
-
-            projectStartChanged: function ()
-            {
-                this.$.thumb.style.left = this.convertStartToCssLeft(this.start);
-            },
-
-            secondsPerPixelChanged: function ()
-            {
-                console.warn('TODO');
+            var tmp;
+            if ((tmp = this.querySelectorAll('gantt-chart-events')[0]) === undefined || 3 >= tmp.childNodes.length) {
+                this.$.subEventsContainer.style.display = 'none';
+                this.$.subEventsExpander.style.display = 'none';
             }
-        });
-    </script>
+        },
+        messageChanged: function () {
+            this.doCalc();
+        },
+        doCalc: function () {
+            this.messageCalculated = this.message + "?";
+        },
+        reSizeSubEventsContainer: function () {
+            var maxEnd = this.duration + (this.start - this.subEventsContainerStart);
+            var arr = this.querySelectorAll('gantt-event');
+            var length = arr.length,
+                    element = null;
+            for (var i = 0; i < length; i++) {
+                element = arr[i];
+                maxEnd = Math.max(maxEnd, element.start + element.duration - this.subEventsContainerStart);
+            }
+            this.$.subEventsContainer.style.width = this.convertDurationToCssWidth(maxEnd);
+            this.send("duration-changed");
+        },
+        durationChanged: function () {
+            "use strict";
+            this.$.thumb.style.width = this.convertDurationToCssWidth(this.duration);
+            this.reSizeSubEventsContainer();
+            this.send("duration-changed");
+        },
+        convertDurationToCssWidth: function (duration) {
+            return this.applyZoom(duration) + "px";
+        },
+        rePlaceSubEventsContainer: function () {
+            var minStart = this.start;
+            var arr = this.querySelectorAll('gantt-event');
+            var length = arr.length,
+                    element = null;
+            for (var i = 0; i < length; i++) {
+                element = arr[i];
+                if (element.parentElement.parentElement === this)
+                    minStart = Math.min(minStart, element.subEventsContainerStart);
+            }
+            this.subEventsContainerStart = minStart;
+            this.$.subEventsContainer.style.left = this.convertStartToCssLeft(minStart);
+            this.$.subEventsContainerChild.style.left = this.negateCSSPxValue(this.$.subEventsContainer.style.left);
+            this.send("start-changed");
+            this.reSizeSubEventsContainer();
+        },
+        startChanged: function () {
+            "use strict";
+            this.$.thumb.style.left = this.convertStartToCssLeft(this.start);
+            if (this.oldStart != 0) {
+                if (this.justMoved) {
+                    var childEvents = this.querySelector('gantt-chart-events');
+                    if (childEvents) {
+                        childEvents.justMoved = true;
+                        childEvents.start = childEvents.start + (this.start - this.oldStart);
+                    }
+                    this.justMoved = false;
+                }
+
+                this.rePlaceSubEventsContainer();
+            }
+
+            this.send("start-changed");
+
+            this.oldStart = this.start;
+        },
+        convertStartToCssLeft: function (startValue) {
+            return (this.applyZoom(startValue - this.projectStart)) + "px";
+        },
+        applyZoom: function (value, reverse) {
+            if (reverse)
+                return value / this.zoom * this.secondsPerPixel;
+            return value * this.zoom / this.secondsPerPixel;
+        },
+        zoomChanged: function () {
+            this.startChanged();
+            this.durationChanged();
+        },
+        trackStart: function (e) {
+            if (e.target == this.$.resizeHandle) {
+                this.state = 'beingResized';
+                this.$.resizeHandle.style.cursor = 'e-resize';
+                this.oldDuration = this.duration;
+            }
+            else if (e.target == this.$.modifyStartHandle) {
+                this.state = 'startBeingModified';
+                this.$.modifyStartHandle.style.cursor = 'w-resize';
+                this.tmpOldStart = this.start;
+                this.oldDuration = this.duration;
+            } else if (e.target == this.$.thumb) {
+                this.state = 'beingMoved';
+                this.$.thumb.style.cursor = 'move';
+                this.tmpOldStart = this.start;
+            }
+        },
+        track: function (e) {
+            if (this.state == 'beingResized') {
+                this.$.thumb.style.width = this.convertDurationToCssWidth(this.newDuration = (this.oldDuration + this.applyZoom(e.dx, true)));
+            } else if (this.state == 'startBeingModified') {
+                this.$.thumb.style.left = this.convertStartToCssLeft(this.newStart = (this.tmpOldStart + this.applyZoom(e.dx, true)));
+                this.$.thumb.style.width = this.convertDurationToCssWidth(this.newDuration = (this.oldDuration - this.applyZoom(e.dx, true)));
+            } else if (this.state == 'beingMoved') {
+                this.$.thumb.style.left = this.convertStartToCssLeft(this.newStart = (this.tmpOldStart + this.applyZoom(e.dx, true)));
+            }
+        },
+        trackEnd: function () {
+            if (this.state == 'beingResized') {
+                this.$.resizeHandle.style.cursor = null;
+                this.duration = this.newDuration;
+                delete this.oldDuration, this.newDuration;
+                this.state = null;
+            } else if (this.state == 'startBeingModified') {
+                this.$.modifyStartHandle.style.cursor = null;
+                this.start = this.newStart;
+                this.duration = this.newDuration;
+                delete this.tmpOldStart, this.newStart;
+                delete this.oldDuration, this.newDuration;
+                this.state = null;
+            } else if (this.state == 'beingMoved') {
+                this.$.thumb.style.cursor = null;
+                this.justMoved = true;
+                this.start = this.newStart;
+                delete this.tmpOldStart, this.newStart;
+                this.state = null;
+            }
+            // make valueChanged calls immediately
+            dirtyCheck();
+        },
+        projectStartChanged: function () {
+            this.startChanged();
+        },
+        secondsPerPixelChanged: function () {
+            console.warn('TODO');
+        },
+        negateCSSPxValue: function (pxValue) {
+            if (pxValue[0] === '-')
+                return pxValue.substr(1);
+            else
+                return '-' + pxValue;
+        },
+        expanderClicked: function () {
+            if ('none' === this.$.subEventsContainer.style.display) {
+                this.$.subEventsContainer.style.display = 'block'
+                this.$.subEventsExpander.textContent = '-';
+            } else {
+                this.$.subEventsContainer.style.display = 'none';
+                this.$.subEventsExpander.textContent = '+';
+            }
+        },
+        childStartChangedHandler: function (e) {
+            if (e.target.parentElement.parentElement === this) {
+                this.rePlaceSubEventsContainer();
+            }
+        },
+        childDurationChangedHandler: function (e) {
+            if (e.target.parentElement.parentElement === this) {
+                this.reSizeSubEventsContainer();
+            }
+        }
+    });
+</script>
 </element>

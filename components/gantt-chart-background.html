@@ -14,19 +14,19 @@
             }
             #backgroundContainer {
                 cursor: pointer;
-               
-                width:100%;
+                opacity: 0.5;
+                width: 100%;
                 position: relative;
+            
             }
             #backgroundCanvas {
                 cursor: pointer;
-                background-color: #eee;
-                width:100%;
+                width: 100%;
                 position: relative;
             }
         </style>
         <div id="backgroundContainer">
-            <canvas id="backgroundCanvas" width="100%"></canvas>
+            <canvas id="backgroundCanvas"></canvas>
         </div>
     </template>
     <script>
@@ -73,7 +73,7 @@
                         var startDate = moment.unix(this.panStartTimestamp).startOf('day');
                         
                         ctx.beginPath();
-                        ctx.strokeStyle = '#e3e3e3';
+                        ctx.strokeStyle = '#f2f2f2';
                         ctx.lineWidth = (width / days);
                         for (var offset = (startDate.unix() - this.panStartTimestamp) / pixels_per_second; offset < width; offset += (width / days), startDate.add('days', 1)) {
                             

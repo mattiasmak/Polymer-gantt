@@ -1,0 +1,100 @@
+@host {
+              * {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                display: block;
+
+              }
+            }
+
+            #ganttrow {
+                padding: 5px 0;
+                margin: 5px 0;
+                
+
+            }
+
+            #thumb {
+                background-color: #3498db;
+                padding-bottom: 11px;
+                padding-top: 11px;
+                border-radius: 6px;
+                vertical-align: middle;
+                text-align: center;
+                font: 16.0px/1.231 "Lato", sans-serif;
+                color: white;
+                font-weight: normal;
+                height: 16px;
+                overflow: hidden;
+                display: inline-block;
+                cursor: auto;
+                position: relative;
+                padding-left: 0;
+                padding-right: 0;
+                min-width: 16px;
+                white-space: nowrap;
+                margin-top:10px;
+            }
+
+            #thumb:hover, .thumbhover {
+               background-color: red;
+               box-shadow: 0px 2px 5px #888;
+            }
+
+            .plus {
+                position: absolute;
+                height:100%;
+                vertical-align: middle;
+                width: 10px;
+                left:10px;
+               
+            }
+
+            .handle {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 10px;
+                cursor: pointer;
+            }
+
+            #resizeHandle {
+                right: 0px;
+            }
+
+            #modifyStartHandle {
+                left: 0px;
+            }
+
+             #resizeHandle:hover {
+                background-color: white;
+                opacity: 0.4;
+                border-radius: 6px;
+            }
+
+            #modifyStartHandle:hover {
+                background-color: white;
+                opacity: 0.4;
+                border-radius: 6px;
+            }
+
+            #subEventsContainer {
+            background-color: rgba(0, 50, 128, .2);
+            position: relative;
+        }
+
+        #subEventsContainerChild {
+            position: relative;
+        }
+
+        #subEventsExpander {
+            position: absolute;
+            left: 20px;
+            cursor: pointer;
+            font-size: large;
+            background-color: lightblue;
+        }

@@ -19,38 +19,91 @@
 </head>
 <body>
 
-<gantt-chart id="thechart" zoom="1" projectStart="1370026800" showZoomControl="1" panStart="1370026800">
-    <!-- projectStart and panStart is moment("1 Jun 2013").unix() -->
+<gantt-chart zoom="1.5" projectStart="1370026800" showZoomControl="1" panStart="1370199600">
+    <!-- projectStart is moment("1 Jun 2013").unix() -->
+    <!-- panStart is moment("3 Jun 2013").unix() -->
     <gantt-chart-events>
         <template id="events" repeat="{{events}}">
-            <gantt-event id="{{thetitle}}" message="{{thetitle}}" duration="{{duration}}" start="{{start}}"></gantt-event>
+            <gantt-event message="{{theTitle}}" duration="{{duration}}" start="{{start}}">
+                <gantt-chart-events start="{{start}}">
+                    <template ref="events" repeat="{{ subEvents }}"></template>
+                </gantt-chart-events>
+            </gantt-event>
         </template>
     </gantt-chart-events>
 </gantt-chart>
 
 <script>
     var t = document.getElementById('events');
-
     var model = {
         events: [
-            { thetitle: 'An event', duration: moment.duration(4, 'days').asSeconds(), start: moment("1 Jun 2013").unix() },
-            { thetitle: 'GoodBye', duration: moment.duration(3, 'days').asSeconds(), start: moment("2 Jun 2013").unix() },
-            { thetitle: 'Sed ut perspiciatis', duration: moment.duration(2, 'days').asSeconds(), start: moment("3 Jun 2013").unix() },
-            { thetitle: 'Neque porro', duration: moment.duration(1, 'days').asSeconds(), start: moment("5 Jun 2013").unix() },
-            { thetitle: 'At vero eos et accusamus', duration: moment.duration(5, 'days').asSeconds(), start: moment("4 Jun 2013").unix() },
-            { thetitle: 'Nam libero', duration: moment.duration(6, 'days').asSeconds(), start: moment("3 Jun 2013").unix() },
-            { thetitle: 'GoodBye', duration: moment.duration(4, 'days').asSeconds(), start: moment("6 Jun 2013").unix() },
-            { thetitle: 'Neque porro', duration: moment.duration(3, 'days').asSeconds(), start: moment("7 Jun 2013").unix() },
-            { thetitle: 'Hello', duration: moment.duration(6, 'days').asSeconds(), start: moment("8 Jun 2013").unix() },
-            { thetitle: 'Et harum quidem', duration: moment.duration(3, 'days').asSeconds(), start: moment("8 Jun 2013").unix() }
+            {
+                theTitle: 'An event',
+                duration: moment.duration(4, 'days').asSeconds(),
+                start: moment("1 Jun 2013").unix()
+            },
+            {
+                theTitle: 'GoodBye',
+                duration: moment.duration(3, 'days').asSeconds(),
+                start: moment("5 Jun 2013").unix()
+            },
+            {
+                theTitle: 'Hello',
+                duration: moment.duration(6, 'days').asSeconds(),
+                start: moment("5 Jun 2013").unix(),
+                subEvents: [
+                    {
+                        theTitle: 'Sub One',
+                        duration: moment.duration(1, 'days').asSeconds(),
+                        start: moment("5 Jun 2013").unix()
+                    },
+                    {
+                        theTitle: 'Sub Two',
+                        duration: moment.duration(4, 'days').asSeconds(),
+                        start: moment("6 Jun 2013").unix(),
+                        subEvents: [
+                            {
+                                theTitle: 'Sub Start',
+                                duration: moment.duration(1, 'days').asSeconds(),
+                                start: moment("6 Jun 2013").unix()
+                            },
+                            {
+                                theTitle: 'Sub Middle',
+                                duration: moment.duration(2, 'days').asSeconds(),
+                                start: moment("7 Jun 2013").unix()
+                            },
+                            {
+                                theTitle: 'Sub End',
+                                duration: moment.duration(1, 'days').asSeconds(),
+                                start: moment("9 Jun 2013").unix()
+                            }
+                        ]
+                    } ,
+                    {
+                        theTitle: 'Sub Three',
+                        duration: moment.duration(1, 'days').asSeconds(),
+                        start: moment("10 Jun 2013").unix()
+                    }
+                ]
+            },
+            {
+                theTitle: 'GoodBye',
+                duration: moment.duration(3, 'days').asSeconds(),
+                start: moment("8 Jun 2013").unix()
+            }
         ]
     };
-   
+    //    console.log(model);
+    //      HTMLTemplateElement.bindTree(t, model);
     t.model = model;
-
+    //      document.addEventListener('click', function(e){
+    //
+    //          model.events.push( { theTitle: 'Another event' })
+    //
+    //
+    //      }, false);
 </script>
 
 
-
-    </body>
+</body>
 </html>

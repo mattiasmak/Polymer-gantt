@@ -1,4 +1,4 @@
-<element name="gantt-chart-events" attributes="zoom projectStart secondsPerPixel panStart">
+<element name="gantt-chart-events" attributes="zoom projectStart secondsPerPixel panStart start">
     <template>
         <style>
             #eventsContainer {
@@ -6,9 +6,7 @@
             }
         </style>
         <div id="eventsContainer">
-           
-                <content></content>
-            
+            <content></content>
         </div>
     </template>
     <script>
@@ -17,10 +15,12 @@
             projectStart: moment().startOf('month').unix(),
             secondsPerPixel: 864, // show 1 day as 100px when zoom is 1.0
             panStart: moment().startOf('month').unix(),
+            start: 0,
+            oldStart: 0,
+            justMoved: false,
             ready: function () {
                 this.zoomChanged();
                 this.projectStartChanged();
-
             },
             zoomChanged: function () {
                 var arr = this.querySelectorAll('gantt-event');
@@ -31,6 +31,7 @@
                     // Do something with element i.
                     element.zoom = this.zoom;
                 }
+                this.panStartChanged();
             },
             projectStartChanged: function () {
 //                alert(this.projectStart);
@@ -63,6 +64,27 @@
                 if (reverse)
                     return value / this.zoom * this.secondsPerPixel;
                 return value * this.zoom / this.secondsPerPixel;
+            },
+            startChanged: function () {
+                if (this.oldStart != 0) {
+                    this.randomIdentifier = Math.random();
+                    var arr = this.querySelectorAll('gantt-event');
+                    var length = arr.length,
+                            element = null;
+                    for (var i = 0; i < length; i++) {
+                        element = arr[i];
+                        // Do something with element i.
+                        if (element.parentElement.randomIdentifier == this.randomIdentifier) {
+                            if (this.justMoved) {
+                                element.justMoved = true;
+                            }
+                            element.start = element.start + (this.start - this.oldStart);
+                        }
+                    }
+                    this.justMoved = false;
+                    delete this.randomIdentifier;
+                }
+                this.oldStart = this.start;
             }
         });
     </script>
