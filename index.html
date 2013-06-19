@@ -5,16 +5,13 @@
     <script src='polymer/polymer.min.js' debug log="bind,watch,ready"></script>
     <script src="moment/min/moment.min.js"></script>
     <script src="moment-range/lib/moment-range.js"></script>
+    
 
     <link rel="import" href="components/gantt-chart.html">
     <link rel="import" href="components/gantt-chart-timeline.html">
     <link rel="import" href="components/gantt-chart-background.html">
     <link rel="import" href="components/gantt-chart-events.html">
     <link rel="import" href="components/gantt-event.html">
-
-    <style>
-      
-    </style>
 
 </head>
 <body>
@@ -33,7 +30,12 @@
     </gantt-chart-events>
 </gantt-chart>
 
+
+
 <script>
+    
+
+
     var t = document.getElementById('events');
     var model = {
         events: [
@@ -93,15 +95,9 @@
             }
         ]
     };
-    //    console.log(model);
-    //      HTMLTemplateElement.bindTree(t, model);
+    
     t.model = model;
-    //      document.addEventListener('click', function(e){
-    //
-    //          model.events.push( { theTitle: 'Another event' })
-    //
-    //
-    //      }, false);
+   
 </script>
 
 

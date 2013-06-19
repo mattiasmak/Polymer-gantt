@@ -11,6 +11,7 @@
                  on-trackend="trackEnd"></div>
             <span id="subEventsExpander" on-click="expanderClicked">-</span>
             {{message}}
+            <span id="details" on-click="detailsClicked">i</span>
             <div id="resizeHandle" class="handle" on-trackstart="trackStart" on-track="track"
                  on-trackend="trackEnd"></div>
         </div>
@@ -136,8 +137,10 @@
             } else if (e.target == this.$.thumb) {
                 this.state = 'beingMoved';
                 this.$.thumb.style.cursor = 'move';
+                //this.$.thumb.style.backgroundColor = 'red';
                 this.tmpOldStart = this.start;
             }
+           
         },
         track: function (e) {
             if (this.state == 'beingResized') {
@@ -192,6 +195,9 @@
                 this.$.subEventsContainer.style.display = 'none';
                 this.$.subEventsExpander.textContent = '+';
             }
+        },
+        detailsClicked: function () {
+            this.send('detailsclicked');
         },
         childStartChangedHandler: function (e) {
             if (e.target.parentElement.parentElement === this) {

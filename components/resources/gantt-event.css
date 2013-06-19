@@ -40,6 +40,12 @@
                 margin-top:10px;
             }
 
+            .moving
+            {
+
+                background-color: purple;
+            }
+
             #thumb:hover, .thumbhover {
                background-color: red;
                box-shadow: 0px 2px 5px #888;
@@ -85,16 +91,50 @@
             #subEventsContainer {
             background-color: rgba(0, 50, 128, .2);
             position: relative;
+            border-radius: 3px;
+            
         }
 
         #subEventsContainerChild {
             position: relative;
+
         }
 
-        #subEventsExpander {
+        #details
+        {
             position: absolute;
-            left: 20px;
+            right: 12px;
             cursor: pointer;
             font-size: large;
-            background-color: lightblue;
+            width:15px;
+            height:15px;
+            border-radius: 3px;
+            border:1px solid transparent;
+            padding:0;
+            line-height: 16px;
+            font-size: 12px;
+
+        }
+        #details:hover
+        {
+            border:1px solid #fff;
+            background-color: #66a;
+
+        }
+        #subEventsExpander {
+            position: absolute;
+            left: 12px;
+            cursor: pointer;
+            font-size: large;
+            width:15px;
+            height:15px;
+            border-radius: 3px;
+            border:1px solid transparent;
+            padding:0;
+            line-height: 13px;
+        }
+        #subEventsExpander:hover {
+            
+            border:1px solid #fff;
+            background-color: #66a;
         }

@@ -1,0 +1,70 @@
+.container {
+      width: 200px;
+      height: 260px;
+      position: relative;
+      margin: 0 auto 90px;
+      noborder: 1px solid #CCC;
+      -webkit-perspective: 800px;
+         -moz-perspective: 800px;
+           -o-perspective: 800px;
+              perspective: 800px;
+    }
+
+    #card {
+      width: 200px;
+      height: 200px;
+      position: absolute;
+      -webkit-transition: -webkit-transform 1s;
+         -moz-transition: -moz-transform 1s;
+           -o-transition: -o-transform 1s;
+              transition: transform 1s;
+      -webkit-transform-style: preserve-3d;
+         -moz-transform-style: preserve-3d;
+           -o-transform-style: preserve-3d;
+              transform-style: preserve-3d;
+      -webkit-transform-origin: right center;
+         -moz-transform-origin: right center;
+           -o-transform-origin: right center;
+              transform-origin: right center;
+    }
+
+    #card.flipped {
+      -webkit-transform: translateX( -100% ) rotateY( -180deg );
+         -moz-transform: translateX( -100% ) rotateY( -180deg );
+           -o-transform: translateX( -100% ) rotateY( -180deg );
+              transform: translateX( -100% ) rotateY( -180deg );
+    }
+
+    #card figure {
+      display: block;
+      height: 100%;
+      width: 100%;
+      line-height: 130px;
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      font-size: 70px;
+      position: absolute;
+      -webkit-backface-visibility: hidden;
+         -moz-backface-visibility: hidden;
+           -o-backface-visibility: hidden;
+              backface-visibility: hidden;
+
+    }
+
+    #card .front {
+      background: red;
+      border-radius: 5px;
+    }
+
+    #card .back {
+      background: blue;
+      -webkit-transform: rotateY( 180deg );
+         -moz-transform: rotateY( 180deg );
+           -o-transform: rotateY( 180deg );
+              transform: rotateY( 180deg );
+      -webkit-box-shadow: 0px 5px 16px rgba(50, 50, 50, 0.99);
+-moz-box-shadow:    0px 5px 16px rgba(50, 50, 50, 0.99);
+box-shadow:         0px 5px 16px rgba(50, 50, 50, 0.99);
+              border-radius: 15px;
+    }
