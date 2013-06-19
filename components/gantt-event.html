@@ -36,6 +36,7 @@
         justMoved: false, // bool, used by startChanged to decide whether to move sub-events
         oldStart: 0, // used by startChanged to calculate the offset to move sub-events by
         subEventsContainerStart: 0,
+        subEventsContainerEnd: 0,
         ready: function () {
             this.$.resizeHandle.setAttribute('touch-action', 'pan-y');
             this.$.modifyStartHandle.setAttribute('touch-action', 'pan-y');
@@ -61,8 +62,10 @@
                     element = null;
             for (var i = 0; i < length; i++) {
                 element = arr[i];
-                maxEnd = Math.max(maxEnd, element.start + element.duration - this.subEventsContainerStart);
+                if (element.parentElement.parentElement === this && 'none' !== this.$.subEventsContainer.style.display)
+                    maxEnd = Math.max(maxEnd, element.subEventsContainerEnd + element.subEventsContainerStart - this.subEventsContainerStart);
             }
+            this.subEventsContainerEnd = maxEnd;
             this.$.subEventsContainer.style.width = this.convertDurationToCssWidth(maxEnd);
             this.send("duration-changed");
         },
@@ -82,7 +85,7 @@
                     element = null;
             for (var i = 0; i < length; i++) {
                 element = arr[i];
-                if (element.parentElement.parentElement === this)
+                if (element.parentElement.parentElement === this && 'none' !== this.$.subEventsContainer.style.display)
                     minStart = Math.min(minStart, element.subEventsContainerStart);
             }
             this.subEventsContainerStart = minStart;
@@ -137,10 +140,8 @@
             } else if (e.target == this.$.thumb) {
                 this.state = 'beingMoved';
                 this.$.thumb.style.cursor = 'move';
-                //this.$.thumb.style.backgroundColor = 'red';
                 this.tmpOldStart = this.start;
             }
-           
         },
         track: function (e) {
             if (this.state == 'beingResized') {
@@ -195,9 +196,7 @@
                 this.$.subEventsContainer.style.display = 'none';
                 this.$.subEventsExpander.textContent = '+';
             }
-        },
-        detailsClicked: function () {
-            this.send('detailsclicked');
+            this.rePlaceSubEventsContainer();
         },
         childStartChangedHandler: function (e) {
             if (e.target.parentElement.parentElement === this) {

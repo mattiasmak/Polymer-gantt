@@ -92,7 +92,8 @@
             background-color: rgba(0, 50, 128, .2);
             position: relative;
             border-radius: 3px;
-            
+            border:1px solid rgba(0, 50, 128, .25);
+
         }
 
         #subEventsContainerChild {
